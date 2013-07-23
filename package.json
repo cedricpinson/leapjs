@@ -1,7 +1,7 @@
 {
   "name": "leapjs",
-  "version": "0.1.2",
-  "description": "Leap Motion Client",
+  "version": "0.2.0-beta6",
+  "description": "Javascript client for the Leapmotion",
   "main": "lib",
   "scripts": {
     "test": "make test-node"
@@ -14,15 +14,13 @@
   "dependencies": {
     "ws": "0.4.25",
     "underscore": "1.4.4",
-    "gl-matrix": "2.0.x"
+    "gl-matrix": "2.0.0"
   },
   "devDependencies": {
-    "underscore": "1.4.4",
-    "browserify": "git://github.com/joshbuddy/node-browserify.git#7a43547ec7e69c9818a865edfc06b3decbf206fb",
+    "browserify": "2.25.0",
     "mocha": "1.7.4",
     "mocha-phantomjs": "3.0.0",
     "phantomjs": "1.9.0-6",
-    "http-server": "0.5.3",
     "uglify-js": "2.3.6",
     "chai": "1.6.1",
     "nodemon": "0.7.8",

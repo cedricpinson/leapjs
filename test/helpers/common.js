@@ -4,37 +4,30 @@ if (typeof(exports) === 'undefined') {
 
 var fingerId = 0
   , handId = 0
-  , frameId =0;
+  , frameId =0
+  , lastGestureState = false;
 
 var fakeController = exports.fakeController = function(opts) {
   opts = _.defaults(opts || {}, {supressAnimationLoop: false, frameEventName: "deviceFrame", enableHeartbeat:false, version: 1})
   var controller = new Leap.Controller(opts)
   var connection = controller.connection;
 
-  connection.teardownSocket = function() {
-    delete connection.protocol;
-    var socket = this.socket;
-    setTimeout(function() { socket.close(); }, 10)
-    delete connection.socket;
-  };
+  lastGestureState = opts.enableGestures;
 
   connection.setupSocket = function() {
-    setTimeout(function() { connection.handleOpen() }, 10)
+    setTimeout(function() { connection.handleOpen() }, 1)
     var socket = {
       messages: [],
       send: function(message) {
         socket.messages.push(message);
       },
-      close: function() {
-        connection.handleClose();
-      }
+      close: function() { }
     };
     connection.on('connect', function() {
       connection.handleData(JSON.stringify({version: opts.version}))
     });
     return socket;
   }
-
   return controller;
 }
 
@@ -52,6 +45,8 @@ var fakeFrame = exports.fakeFrame = function(opts) {
     hands: opts.handData || _(opts.hands || 0).times(function() { return fakeHand() }),
     r: opts.rotation || [[0,1,2], [2,3,4], [2,3,4]],
     t: opts.translation || [1, 2, 3],
+    interactionBox: {center: [1,2,3], size: [1,2,3]},
+    currentFrameRate: 10
   };
   if (opts.gestures) {
     frame.gestures = opts.gestures;
@@ -82,7 +77,9 @@ var fakeHand = exports.fakeHand = function(opts) {
     palmNormal: [1,2,3],
     sphereCenter:[1,2,3],
     r: (opts && opts.rotation) || [[0,1,2], [2,3,4], [2,3,4]],
-    t: (opts && opts.translation) || [1, 2, 3]
+    t: (opts && opts.translation) || [1, 2, 3],
+    timeVisible: 10,
+    stabilizedPalmPosition: [1,2,3]
   }
 }
 
@@ -96,6 +93,10 @@ var fakeFinger = exports.fakeFinger = function() {
     width: 5,
     direction: [10, 10, 10],
     tipPosition: [10, 10, 10],
-    tipVelocity: [10, 10, 10]
+    stabilizedTipPosition: [10, 10, 10],
+    tipVelocity: [10, 10, 10],
+    touchZone: "none",
+    touchDistance: 5,
+    timeVisible: 10
   }
 }
